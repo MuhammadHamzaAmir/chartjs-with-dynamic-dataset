@@ -1,0 +1,32 @@
+version: '2.2'
+
+services:
+  postgres:
+      image: postgres:latest
+      container_name: postgres
+      ports:
+         - 5432:5432
+      environment:
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+         POSTGRES_DB: ecom
+      volumes:
+         - ./ecom-dump.sql:/ecom-dump.sql
+  cube:
+    image: cubejs/cube:latest
+    ports:
+      - 4000:4000  # Cube.js API and Developer Playground
+      - 3000:3000  # Dashboard app, if created
+    environment:
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_HOST=postgres
+      - CUBEJS_DB_USER=postgres
+      - CUBEJS_DB_PASS=postgres
+      - CUBEJS_DB_NAME=ecom
+
+      - CUBEJS_API_SECRET=SECRET
+      - CUBEJS_DEV_MODE=true
+    volumes:
+      - .:/cube/conf
+    depends_on:
+         - postgres
