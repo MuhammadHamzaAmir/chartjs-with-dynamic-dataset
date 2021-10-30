@@ -1,6 +1,16 @@
-version: '2.2'
+version: '3'
 
 services:
+  web:
+    container_name: node
+    build: ./
+    command: npm start
+    environment:
+      PARCEL_WORKERS: 1
+    volumes:
+      - .:/usr/app/
+    ports:
+      - 1235:9001
   postgres:
       image: postgres:latest
       container_name: postgres
@@ -15,6 +25,7 @@ services:
     
   cube:
     image: cubejs/cube:latest
+    container_name: cube
     ports:
       - 4000:4000  # Cube.js API and Developer Playground
       - 3000:3000  # Dashboard app, if created
@@ -31,5 +42,5 @@ services:
       - .:/cube/conf
     depends_on:
          - postgres
-  # command:
-  #   - "npm run start"
+    # command:
+    #      - echo 'Im inside the container!'
