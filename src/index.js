@@ -7,7 +7,7 @@ import "./styles.css";
 const cubejsApi = cubejs(
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1OTQ2NjY4OTR9.0fdi5cuDZ2t3OSrPOMoc3B1_pwhnWj4ZmM3FHEX7Aus",
     {
-        apiUrl:"https://localhost:4000/cubejs-api/v1",
+        apiUrl:"http://localhost:4000/cubejs-api/v1",
     }
 );
 let chart;

@@ -12,6 +12,7 @@ services:
          POSTGRES_DB: ecom
       volumes:
          - ./ecom-dump.sql:/ecom-dump.sql
+    
   cube:
     image: cubejs/cube:latest
     ports:
@@ -30,3 +31,5 @@ services:
       - .:/cube/conf
     depends_on:
          - postgres
+  # command:
+  #   - "npm run start"

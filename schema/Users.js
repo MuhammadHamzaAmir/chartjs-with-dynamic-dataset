@@ -49,11 +49,6 @@ cube(`Users`, {
       type: `string`
     },
     
-    state: {
-      sql: `state`,
-      type: `string`
-    },
-    
     createdAt: {
       sql: `created_at`,
       type: `time`
