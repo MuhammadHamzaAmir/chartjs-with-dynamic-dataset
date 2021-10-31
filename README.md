@@ -207,7 +207,7 @@ cubejsApi
 	- *./index.html*
 3. *.src/index.js* file handles the API calls from the backend. It sends and receives the data via API call from the backend. It dynamically generates charts/graphs using ChartJS from the received data from backend.
 4. *.src/styles.css* handles the styling of our frontend. *./index.html* displays generated charts/graphs.
-5. Cube container handles the requests between backend and frontend. It recevies requests from frontend or say Node container, then it sends resposes from backend or say Postgres conatiner based upon the request.
+5. Cube container handles the requests between backend and frontend. It recevies requests from frontend or say Node container, then it sends resposes from backend or say Postgres conatiner based upon the requests.
 6. Postgres container handles the database of the system. It is the backend of the system. It receives requests from Cube container and send responses to Cube based upon the requests.
 ## **Concluson**
 
