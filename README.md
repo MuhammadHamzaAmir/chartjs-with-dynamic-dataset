@@ -48,7 +48,7 @@ docker exec postgres bash -c "psql --db ecom -f ecom-dump.sql -U postgres"
 
 ![Dynamic Chart](media/data.png)
 
-7. To observe a graph/chart from static data. We will comment out the following code in the *index.js* file.
+7. To observe a graph/chart generated from static data. We will comment out the following code in the *index.js* file.
 
 ```
 cubejsApi
@@ -186,9 +186,13 @@ cubejsApi
   });
 ```
 
-10. Now, for our frontend, goto http://localhost:1235. Our server is running in a dockor container. We will see a dynamic graph generated from dynamic data.
+10. Now, goto http://localhost:1235. Our server is running in a dockor container. We will see a dynamic graph generated from dynamic data.
 
 ![Dynamic Graph](media/dynamic-1.png)
+
+11. We can generate different graphs/chats dynamically by selecting different date. Then the graph will be generated dynamically from the data.
+
+![Dynamic Graph date](media/dynamic-2.png)
 
 ## **Conclusion**
 
