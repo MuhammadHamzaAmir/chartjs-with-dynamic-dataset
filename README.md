@@ -44,11 +44,149 @@ docker compose up -d
 ```
 docker exec postgres bash -c "psql --db ecom -f ecom-dump.sql -U postgres"
 ```
-6. We can see data in our database. Now, we can generate schema for our data.
+6. Goto http://localhost:4000. We can see data in our database. Now, we can generate schema for our data.
 
 ![Dynamic Chart](media/data.png)
 
-7. Now, for our frontend, goto http://localhost:1235. Our server is running in a dockor container. We will see a graph with dynamic data.
+7. To observe a graph/chart from static data. We will comment out the following code in the *index.js* file.
+
+```
+cubejsApi
+  .load({
+    measures: ["Orders.count"],
+    timeDimensions: [
+      {
+        dimension: "Orders.createdAt",
+        granularity: `day`,
+        dateRange: [`08/01/2020`, `09/01/2020`],
+      },
+    ],
+  })
+  .then((resultSet) => {
+    new Chart(document.getElementById("chart"), {
+      type: "line",
+      options: {},
+      data: chartJsData(resultSet),
+    });
+  });
+```
+The following code will be commented in *index.js* file.
+
+```
+let chart;
+
+var drawChart = function (startDate, endDate) {
+    cubejsApi
+        .load({
+            measures: ["Orders.count"],
+            timeDimensions: [
+                {
+                    dimension: "Orders.createdAt",
+                    granularity: `day`,
+                    dateRange: [startDate, endDate],
+                },
+            ],
+        })
+        .then((resultSet) => {
+            if (chart) {
+                chart.data = chartJsData(resultSet);
+                chart.update();
+            } 
+            else {
+                chart = new Chart(document.getElementById("chart"), {type: "line",options: {},data: chartJsData(resultSet),});
+            }
+        });
+};
+const MIN_DATE = "2020-08-01";
+const MAX_DATE = "2020-09-01";
+
+flatpickr("#dates", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    defaultDate: [MIN_DATE, MAX_DATE],
+
+    onChange: function (selectedDates) {
+        if (selectedDates.length === 2) {
+            drawChart(selectedDates[0], selectedDates[1]);
+        }
+    },
+});
+
+drawChart(MIN_DATE, MAX_DATE);
+```
+
+8. Now, for our frontend, goto http://localhost:1235. Our server is running in a dockor container. We will see a static graph generated from static data.
+
+![Dynamic Graph](media/static.png)
+
+9. We can observe charts/graphs created dynamically from dynamic data. For this, comment out the following code in *index.js* file.
+
+```
+let chart;
+
+var drawChart = function (startDate, endDate) {
+    cubejsApi
+        .load({
+            measures: ["Orders.count"],
+            timeDimensions: [
+                {
+                    dimension: "Orders.createdAt",
+                    granularity: `day`,
+                    dateRange: [startDate, endDate],
+                },
+            ],
+        })
+        .then((resultSet) => {
+            if (chart) {
+                chart.data = chartJsData(resultSet);
+                chart.update();
+            } 
+            else {
+                chart = new Chart(document.getElementById("chart"), {type: "line",options: {},data: chartJsData(resultSet),});
+            }
+        });
+};
+const MIN_DATE = "2020-08-01";
+const MAX_DATE = "2020-09-01";
+
+flatpickr("#dates", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    defaultDate: [MIN_DATE, MAX_DATE],
+
+    onChange: function (selectedDates) {
+        if (selectedDates.length === 2) {
+            drawChart(selectedDates[0], selectedDates[1]);
+        }
+    },
+});
+
+drawChart(MIN_DATE, MAX_DATE);
+```
+The following code will be commented in *index.js* file.
+
+```
+cubejsApi
+  .load({
+    measures: ["Orders.count"],
+    timeDimensions: [
+      {
+        dimension: "Orders.createdAt",
+        granularity: `day`,
+        dateRange: [`08/01/2020`, `09/01/2020`],
+      },
+    ],
+  })
+  .then((resultSet) => {
+    new Chart(document.getElementById("chart"), {
+      type: "line",
+      options: {},
+      data: chartJsData(resultSet),
+    });
+  });
+```
+
+10. Now, for our frontend, goto http://localhost:1235. Our server is running in a dockor container. We will see a dynamic graph generated from dynamic data.
 
 ![Dynamic Graph](media/dynamic-1.png)
 
