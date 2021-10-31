@@ -48,7 +48,7 @@ docker exec postgres bash -c "psql --db ecom -f ecom-dump.sql -U postgres"
 
 ![Dynamic Chart](media/data.png)
 
-7. To observe a graph/chart generated from static data. We will comment out the following code in the *index.js* file.
+7. To observe a graph/chart generated from static data. We will comment out the following code in the *.src/index.js* file.
 
 ```
 cubejsApi
@@ -70,7 +70,7 @@ cubejsApi
     });
   });
 ```
-The following code will be commented in *index.js* file.
+The following code will be commented in *.src/index.js* file.
 
 ```
 let chart;
@@ -119,7 +119,7 @@ drawChart(MIN_DATE, MAX_DATE);
 
 ![Dynamic Graph](media/static.png)
 
-9. We can observe charts/graphs created dynamically from dynamic data. For this, comment out the following code in *index.js* file.
+9. We can observe charts/graphs created dynamically from dynamic data. For this, comment out the following code in *.src/index.js* file.
 
 ```
 let chart;
@@ -163,7 +163,7 @@ flatpickr("#dates", {
 
 drawChart(MIN_DATE, MAX_DATE);
 ```
-The following code will be commented in *index.js* file.
+The following code will be commented in *.src/index.js* file.
 
 ```
 cubejsApi
