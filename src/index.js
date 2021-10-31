@@ -51,7 +51,7 @@ flatpickr("#dates", {
 
 drawChart(MIN_DATE, MAX_DATE);
 
-// let static_chart = cubejsApi
+// cubejsApi
 //   .load({
 //     measures: ["Orders.count"],
 //     timeDimensions: [
