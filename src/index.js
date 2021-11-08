@@ -119,15 +119,43 @@ let chart;
 //   });
 
 
+// cubejsApi
+//   .load({
+//     measures: ["Campaigns.count"],
+//     timeDimensions: [],
+//     order: {
+//       "Campaigns.count": "desc",
+//     },
+//     filters: [],
+//     dimensions: ["Email.campaignName"],
+//   })
+//   .then((resultSet) => {
+//     new Chart(document.getElementById("chart"), {
+//       type: "bar",
+//       options: {
+//         scales: {
+//           y: {
+//             beginAtZero: true,
+//           },
+//         },
+//       },
+//       data: chartJsData_many_to_many_without_table(resultSet),
+//     });
+//   });
+
 cubejsApi
   .load({
-    measures: ["Campaigns.count"],
-    timeDimensions: [],
+    measures: ["Orders.number"],
+    timeDimensions: [
+      {
+        dimension: "Orders.createdAt",
+      },
+    ],
     order: {
-      "Campaigns.count": "desc",
+      "Orders.number": "asc",
     },
     filters: [],
-    dimensions: ["Email.campaignName"],
+    dimensions: ["Users.company"],
   })
   .then((resultSet) => {
     new Chart(document.getElementById("chart"), {
@@ -139,7 +167,7 @@ cubejsApi
           },
         },
       },
-      data: chartJsData_many_to_many_without_table(resultSet),
+      data: chartJsData_2(resultSet),
     });
   });
 var chartJsData = function (resultSet) {
@@ -202,6 +230,24 @@ var chartJsData_many_to_many_without_table = function (resultSet) {
         label: "Campaign Count",
         data: resultSet.chartPivot().map(function (r) {
           return r["Campaigns.count"];
+        }),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+    ],
+    labels: resultSet.categories().map(function (c) {
+      return c.x;
+    }),
+  };
+};
+
+var chartJsData_2 = function (resultSet) {
+  console.log(resultSet.categories());
+  return {
+    datasets: [
+      {
+        label: "Orders Number",
+        data: resultSet.chartPivot().map(function (r) {
+          return r["Orders.number"];
         }),
         backgroundColor: "rgb(255, 99, 132)",
       },
