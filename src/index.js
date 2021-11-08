@@ -94,15 +94,40 @@ let chart;
 //     });
 //   });
 
+// cubejsApi
+//   .load({
+//     measures: ["PostTopics.count"],
+//     timeDimensions: [],
+//     order: {
+//       "PostTopics.count": "desc",
+//     },
+//     filters: [],
+//     dimensions: ["Topics.topics"],
+//   })
+//   .then((resultSet) => {
+//     new Chart(document.getElementById("chart"), {
+//       type: "bar",
+//       options: {
+//         scales: {
+//           y: {
+//             beginAtZero: true,
+//           },
+//         },
+//       },
+//       data: chartJsData_many_to_many(resultSet),
+//     });
+//   });
+
+
 cubejsApi
   .load({
-    measures: ["PostTopics.count"],
+    measures: ["Campaigns.count"],
     timeDimensions: [],
     order: {
-      "PostTopics.count": "desc",
+      "Campaigns.count": "desc",
     },
     filters: [],
-    dimensions: ["Topics.topics"],
+    dimensions: ["Email.campaignName"],
   })
   .then((resultSet) => {
     new Chart(document.getElementById("chart"), {
@@ -114,7 +139,7 @@ cubejsApi
           },
         },
       },
-      data: chartJsData_many_to_many(resultSet),
+      data: chartJsData_many_to_many_without_table(resultSet),
     });
   });
 var chartJsData = function (resultSet) {
@@ -159,6 +184,24 @@ var chartJsData_many_to_many = function (resultSet) {
         label: "Post Topics Count",
         data: resultSet.chartPivot().map(function (r) {
           return r["PostTopics.count"];
+        }),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+    ],
+    labels: resultSet.categories().map(function (c) {
+      return c.x;
+    }),
+  };
+};
+
+var chartJsData_many_to_many_without_table = function (resultSet) {
+  console.log(resultSet.categories());
+  return {
+    datasets: [
+      {
+        label: "Campaign Count",
+        data: resultSet.chartPivot().map(function (r) {
+          return r["Campaigns.count"];
         }),
         backgroundColor: "rgb(255, 99, 132)",
       },
