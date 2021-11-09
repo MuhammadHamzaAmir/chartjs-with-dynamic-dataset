@@ -1,59 +1,62 @@
 cube(`Users`, {
   sql: `SELECT * FROM public.users`,
-  
+
   preAggregations: {
     // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started  
+    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
   },
-  
+
   joins: {
-    
+    OrganizationUsers: {
+      sql: `${OrganizationUsers}.user_id = ${Users}.id`,
+      relationship: `hasMany`,
+    },
   },
-  
+
   measures: {
     count: {
       type: `count`,
-      drillMembers: [id, city, firstName, lastName, createdAt]
-    }
+      drillMembers: [id, city, firstName, lastName, createdAt],
+    },
   },
-  
+
   dimensions: {
     id: {
       sql: `id`,
       type: `number`,
-      primaryKey: true
+      primaryKey: true,
     },
-    
+
     city: {
       sql: `city`,
-      type: `string`
+      type: `string`,
     },
-    
+
     company: {
       sql: `company`,
-      type: `string`
+      type: `string`,
     },
-    
+
     gender: {
       sql: `gender`,
-      type: `string`
+      type: `string`,
     },
-    
+
     firstName: {
       sql: `first_name`,
-      type: `string`
+      type: `string`,
     },
-    
+
     lastName: {
       sql: `last_name`,
-      type: `string`
+      type: `string`,
     },
-    
+
     createdAt: {
       sql: `created_at`,
-      type: `time`
-    }
+      type: `time`,
+    },
   },
-  
-  dataSource: `default`
+
+  dataSource: `default`,
 });
