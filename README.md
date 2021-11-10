@@ -1,6 +1,7 @@
-# **ChartJS wirh dynamic dataset**
+# **Working with Joins**
 
-In this tutorial we are going to build a dynamic graph/chart generator based o data with ChartJS.
+In this tutorial we are going to explore different types of relations between tables in a database and
+observe different types of charts with ChartJS.
 
 ## **Prerequisites**
 
@@ -9,8 +10,9 @@ In this tutorial we are going to build a dynamic graph/chart generator based o d
 -  Node
 -  Database (we will use PostgreSQL) with sample data
 -  Cube.js backend to handle communications between database and frontend
--   Chart.js to generate charts and graphs.
+-  Chart.js to generate charts and graphs.
 -  Frontend application (we will build one with HTML/CSS)
+-  Must have knowledge of generating charts/graphs with Chart.js
 
 ## **Overview**
 
@@ -209,6 +211,171 @@ cubejsApi
 4. *.src/styles.css* handles the styling of our frontend. *./index.html* displays generated charts/graphs.
 5. Cube container handles the requests between backend and frontend. It recevies requests from frontend or say Node container, then it sends resposes from backend or say Postgres conatiner based upon the requests.
 6. Postgres container handles the database of the system. It is the backend of the system. It receives requests from Cube container and send responses to Cube based upon the requests.
-## **Concluson**
+
+
+# **Joins**
+
+A join creates a relationship between two cubes in your Cube project. Cube supports three kinds of relationships often found in SQL databases:
+- hasOne
+- hasMany
+- belongsTo
+
+For Example, we have two cubes *Users* and *Orders*. If we add a join to the users cube.
+
+```
+cube('Users', {
+  ...,
+
+  joins: {
+    Orders: {
+      relationship: `hasMany`,
+      sql: `${CUBE}.id = ${Orders}.user_id`,
+    },
+  },
+});
+```
+The above join means that a user has many orders. If we send a query such as:
+```
+{
+  "dimensions": ["Orders.status", "Users.company"],
+  "timeDimensions": [
+    {
+      "dimension": "Orders.createdAt"
+    }
+  ],
+  "order": [["Users.company", "asc"]],
+  "measures": ["Orders.count"]
+}
+```
+The SQL query generated from the above JSON query is:
+```
+SELECT
+  "orders".status "orders_status",
+  "users".company "users_company",
+  count("orders".id) "orders_count"
+FROM
+  public.users AS "users"
+  LEFT JOIN public.orders AS "orders" ON "users".id = "orders".user_id
+GROUP BY
+  1,
+  2
+ORDER BY
+  2 ASC
+LIMIT
+  10000
+```
+We create a bar chart from the data we receive will be shown as:
+
+![Dynamic Bar Chart users](media/pic1.png)
+
+What if a user places order and that user is not registered and order is placed anonymously. We we do? To remedy this, we'll remove the join from the Users cube and instead define a join with a belongsTo relationship on the Orders cube:
+
+```
+cube('Orders', {
+  ...,
+
+  joins: {
+    Users: {
+      relationship: `belongsTo`,
+      sql: `${CUBE}.user_id = ${Users}.id`,
+    },
+  },
+});
+```
+
+In the above schema, our Orders cube defines the relationship between itself and the User cube. The same JSON query now results in the following SQL query:
+
+```
+SELECT
+  "orders".status "orders_status",
+  "users".company "users_company",
+  count("orders".id) "orders_count"
+FROM
+  public.orders AS "orders"
+  LEFT JOIN public.users AS "customers" ON "orders".customer_id = "customers".id
+GROUP BY
+  1,
+  2
+ORDER BY
+  2 ASC
+LIMIT
+  10000
+```
+
+As we can see, the base table in the query is orders, and users is in the LEFT JOIN clause; this means any orders without a user will also be retrieved.
+
+>In Cube, joins only need to be defined from one direction. In the above example, we explicitly removed the hasMany relationship from the User cube; not doing so would cause the query to fail as Cube would be unable to determine a valid join path. 
+
+## **Many-to-Many Joins**
+
+A many-to-many relationship occurs when multiple records in a cube are associated with multiple records in another cube.
+
+For example, let's say we have two cubes, Topics and Posts, pointing to the topics and posts tables in our database respectively. A Post can have more than one Topic, and a Topic may have more than one Post.
+
+In a database, you would most likely have an associative table (also known as a junction table or cross-reference table). In our example, this table name might be post_topics.
+
+In the same way the post_topics table was specifically created to handle this association in the database, we need to create an associative cube PostTopics, and declare the relationships from it to Topics cube and from Posts to PostTopics.
+
+The following example uses the hasMany relationship on the PostTopics cube; this causes the direction of joins to be Posts -> PostTopics -> Topics.
+
+~~~
+cube(`Posts`, {
+  sql: `SELECT * FROM posts`,
+
+  joins: {
+    PostTopics: {
+      relationship: `belongsTo`,
+      sql: `${PostTopics}.post_id = ${Posts}.id`,
+    },
+  },
+});
+
+cube(`Topics`, {
+  sql: `SELECT * FROM topics`,
+});
+
+cube(`PostTopics`, {
+  sql: `SELECT * FROM post_topics`,
+
+  joins: {
+    Topic: {
+      relationship: `hasMany`,
+      sql: `${PostTopics}.topic_id = ${Topics}.id`,
+    },
+  },
+});
+~~~
+
+In scenarios where a table doesn't define a primary key, one can be generated using SQL:
+
+```
+cube(`PostTopics`, {
+  dimensions: {
+    id: {
+      sql: `CONCAT(${CUBE}.post_id, ${CUBE}.topic_id)`,
+      type: `number`,
+      primaryKey: true,
+    },
+  },
+});
+```
+After setting up our database and schema, let's create a chart to observe the reltaion between tables.
+
+Lets send the  following query.
+
+```
+ measures: ["PostTopics.count"],
+    timeDimensions: [],
+    order: {
+      "PostTopics.count": "desc",
+    },
+    filters: [],
+    dimensions: ["Topics.topics"],
+```
+
+
+![Dynamic Bar Chart topics](media/pic2.png)
+
+## **Conclusion**
 
 If you’ve followed the above steps, then you’ve now created, configured, and started a Dynamic Graph/Chart generator using ChartJs and you’re well on your way to taking full advantage of ChartJs as a solution to a variety of Grpahs/Charts needs.

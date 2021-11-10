@@ -96,13 +96,13 @@ let chart;
 
 // cubejsApi
 //   .load({
-//     measures: ["PostTopics.count"],
-//     timeDimensions: [],
-//     order: {
-//       "PostTopics.count": "desc",
-//     },
-//     filters: [],
-//     dimensions: ["Topics.topics"],
+    // measures: ["PostTopics.count"],
+    // timeDimensions: [],
+    // order: {
+    //   "PostTopics.count": "desc",
+    // },
+    // filters: [],
+    // dimensions: ["Topics.topics"],
 //   })
 //   .then((resultSet) => {
 //     new Chart(document.getElementById("chart"), {
