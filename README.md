@@ -215,6 +215,10 @@ cubejsApi
 
 # **Joins**
 
+If we are familiar with the Cube.js playground, then we will have no problem further down the line.
+
+![Dynamic Chart](media/data.png)
+
 A join creates a relationship between two cubes in your Cube project. Cube supports three kinds of relationships often found in SQL databases:
 - hasOne
 - hasMany
@@ -473,9 +477,81 @@ Let's create a chart to see if it works or not
 
 ![Dynamic Bar Chart campaigns](media/pic3.png)
 
+## **Directions of Joins**
 
+The direction of joins greatly influences the final result set. 
+As, we have seen start in the start that direction of join greatly affects the result.
 
+with the query 
+```
+
+SELECT
+  "orders".status "orders_status",
+  "users".company "users_company",
+  count("orders".id) "orders_count"
+FROM
+  public.users AS "users"
+  LEFT JOIN public.orders AS "orders" ON "users".id = "orders".user_id
+GROUP BY
+  1,
+  2
+ORDER BY
+  2 ASC
+LIMIT
+  10000
+```
+
+we can only see orders with registered users
+but, to see orders by the anonymous/guests we have to change the query and relationship
+
+```
+SELECT
+  "orders".status "orders_status",
+  "users".company "users_company",
+  count("orders".id) "orders_count"
+FROM
+  public.orders AS "orders"
+  LEFT JOIN public.users AS "users" ON "orders".user_id = "users".id
+GROUP BY
+  1,
+  2
+ORDER BY
+  2 ASC
+LIMIT
+  10000
+```
+
+This way we can see the orders by anonymous/guests users.
+
+## **Transitive join pitfalls**
+> Transitive law is “If a is equal to b and b is equal to c, then a is equal to c.”
+If one 'table a' has relation 'table b', and 'table b' has relation with 'table c', 
+then 'table a' has realtion with 'table c'
+
+Lets consider an example of users and organization-users we will create cubes of users and 
+organization-users
+
+Lets just say, our database is setup and we send this query
+
+```
+{
+  "measures": ["Users.count"],
+  "dimensions": ["Organizations.name"]
+}
+```
+After running this query, we will get an error
+
+`Error: Can't find join path to join 'Users','Organizations'. `
+
+The problem is that joins are directed and if we try to 
+connect Users and Organizations there's no path from Users to Organizations or 
+either from Organizations to Users. 
+One possible solution is to move the Users-OrganizationUsers join from OrganizationUsers 
+cube to Users, although this affects the query semantics and thus the final results varies.
+
+After rearranging the realtionship, if we run the above query again then it will work.
+So, the realtion between tables matter for transitive joins.
 
 ## **Conclusion**
 
-If you’ve followed the above steps, then you’ve now created, configured, and started a Dynamic Graph/Chart generator using ChartJs and you’re well on your way to taking full advantage of ChartJs as a solution to a variety of Grpahs/Charts needs.
+If you’ve followed the above steps, then you’ve now created, configured, and started a Dynamic Graph/Chart generator using ChartJs and you have explored the different types of realtions between database tables and how to manage relationships between tables and you’re well on your way to taking full advantage of ChartJs as a solution to a variety of Grpahs/Charts needs and managing relationships in the database.
