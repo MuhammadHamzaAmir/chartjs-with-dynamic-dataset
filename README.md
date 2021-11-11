@@ -471,6 +471,10 @@ cube(`Emails`, {
 
 Let's create a chart to see if it works or not
 
+![Dynamic Bar Chart campaigns](media/pic3.png)
+
+
+
 
 ## **Conclusion**
 
