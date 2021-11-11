@@ -376,6 +376,102 @@ Lets send the  following query.
 
 ![Dynamic Bar Chart topics](media/pic2.png)
 
+## **Many-to-many joins without an associative table**
+
+Sometimes there is no associative table in the database, when in reality, there is a many-to-many relationship. In this case, the solution is to extract some data from existing tables and create a virtual (not backed by a real table in the database) associative cube.
+
+Let’s consider the following example. We have tables Emails and Transactions. The goal is to calculate the amount of transactions per campaign. Both Emails and Transactions have a campaign_id column. We don’t have a campaigns table, but data about campaigns is part of the Emails table.
+
+Heres the Emails Cube definition.
+
+```
+cube(`Emails`, {
+  sql: `SELECT * FROM emails`,
+
+  measures: {
+    count: {
+      type: `count`,
+    },
+  },
+
+  dimensions: {
+    id: {
+      sql: `id`,
+      type: `number`,
+      primaryKey: true,
+    },
+
+    campaignName: {
+      sql: `campaign_name`,
+      type: `string`,
+    },
+
+    campaignId: {
+      sql: `campaign_id`,
+      type: `number`,
+    },
+  },
+});
+```
+We will create a Campaigns Cube. The definition is follow:
+```
+cube(`Campaigns`, {
+  sql: `
+SELECT
+  campaign_id,
+  campaign_name,
+FROM emails
+`,
+
+  measures: {
+    count: {
+      type: `count`,
+    },
+  },
+
+  dimensions: {
+    id: {
+      sql: `campaign_id`,
+      type: `string`,
+      primaryKey: true,
+    },
+
+    name: {
+      sql: `campaign_name`,
+      type: `string`,
+    },
+  },
+});
+```
+Now, lets declare a many-to-many relationship. This should be done by declaring a hasMany relationship on the associative cube, Campaigns in our case.
+```
+cube(`Emails`, {
+  sql: `select * emails`,
+
+  joins: {
+    Campaigns: {
+      relationship: `belongsTo`,
+      sql: `${CUBE}.campaign_id = ${Campaigns}.campaign_id
+      AND ${CUBE}.campaign_name = ${Campaigns}.campaign_name`,
+    },
+  },
+ });
+ 
+ cube(`Campaigns`, {
+  joins: {
+    Transactions: {
+      relationship: `hasMany`,
+      sql: `${CUBE}.campaign_name = ${Campaigns}.campaign_name
+      AND ${CUBE}.campaign_id = ${Campaigns}.campaign_id`,
+    },
+  },
+});
+ 
+```
+
+Let's create a chart to see if it works or not
+
+
 ## **Conclusion**
 
 If you’ve followed the above steps, then you’ve now created, configured, and started a Dynamic Graph/Chart generator using ChartJs and you’re well on your way to taking full advantage of ChartJs as a solution to a variety of Grpahs/Charts needs.
