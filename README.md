@@ -209,6 +209,6 @@ cubejsApi
 4. *.src/styles.css* handles the styling of our frontend. *./index.html* displays generated charts/graphs.
 5. Cube container handles the requests between backend and frontend. It recevies requests from frontend or say Node container, then it sends resposes from backend or say Postgres conatiner based upon the requests.
 6. Postgres container handles the database of the system. It is the backend of the system. It receives requests from Cube container and send responses to Cube based upon the requests.
-## **Concluson**
+## **Conclusion**
 
 If you’ve followed the above steps, then you’ve now created, configured, and started a Dynamic Graph/Chart generator using ChartJs and you’re well on your way to taking full advantage of ChartJs as a solution to a variety of Grpahs/Charts needs.
