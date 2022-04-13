@@ -9,7 +9,7 @@ In this tutorial we are going to build a dynamic graph/chart generator based o d
 -  Node
 -  Database (we will use PostgreSQL) with sample data
 -  Cube.js backend to handle communications between database and frontend
--   Chart.js to generate charts and graphs.
+-  Chart.js to generate charts and graphs.
 -  Frontend application (we will build one with HTML/CSS)
 
 ## **Overview**
